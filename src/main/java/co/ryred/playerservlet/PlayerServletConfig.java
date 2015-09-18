@@ -29,6 +29,7 @@ public class PlayerServletConfig
 	public static YamlConfiguration config;
 	public static boolean debug;
 	public static File configFile;
+	public static int scanTime;
 	static int version;
 	private static boolean initted = false;
 
@@ -61,8 +62,8 @@ public class PlayerServletConfig
 		config.options().header( HEADER );
 		config.options().copyDefaults( true );
 
-		version = getInt( "config-version", 2 );
-		set( "config-version", 2 );
+		version = getInt( "config-version", 3 );
+		set( "config-version", 3 );
 		readConfig( PlayerServletConfig.class, null );
 
 		Logger.getRootLogger().log( Level.INFO, "Configuration summary!" );
@@ -192,6 +193,18 @@ public class PlayerServletConfig
 				e.printStackTrace();
 			}
 		}
+
+	}
+
+	private static void scanningSettings()
+	{
+
+		if ( version < 3 ) {
+			Logger.getRootLogger().log( Level.FATAL, "Oudated config, dataconfig is not configured!" );
+			set( "settings.scanner.time", 3 );
+		}
+
+		scanTime = getInt( "settings.scanner.time", 3 );
 
 	}
 

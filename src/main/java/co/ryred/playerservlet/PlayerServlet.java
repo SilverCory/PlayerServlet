@@ -11,7 +11,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Cory Redmond
@@ -35,6 +38,72 @@ public class PlayerServlet extends HttpServlet
 		this.sessionFactory = cfg.buildSessionFactory();*/
 
 		this.context = new FileSystemXmlApplicationContext( PlayerServletConfig.configFile.getPath() );
+
+		if ( PlayerServletConfig.scanTime > 1 ) {
+			new Thread( "Name-Scanning-Thread" )
+			{
+				@Override
+				public void run()
+				{
+
+					while ( true ) {
+
+						try {
+							HttpURLConnection con = (HttpURLConnection) ( new URL( "http://minecraft-skin-viewer.com/player/random" ).openConnection() );
+							con.setRequestProperty( "User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36" );
+							con.setInstanceFollowRedirects( false );
+							con.connect();
+							int responseCode = con.getResponseCode();
+							System.out.println( responseCode );
+							String location = con.getHeaderField( "Location" );
+
+							if ( responseCode == 302 && location != null ) {
+								String[] loc = location.split( "/" );
+
+								String name = loc[ loc.length - 1 ];
+								if ( name != null && name.matches( "[a-zA-Z0-9_]{1,16}" ) ) {
+
+									IUserBean ub = (IUserBean) PlayerServlet.this.context.getBean( "userBean" );
+
+									try {
+										ub.insertUser( new User( name ) );
+									} catch ( Exception e ) {
+									}
+
+									try {
+										if ( !name.toLowerCase().equals( name ) ) {
+											ub.insertUser( new User( name.toLowerCase() ) );
+										}
+									} catch ( Exception e ) {
+									}
+
+									try {
+										if ( !name.toUpperCase().equals( name ) ) {
+											ub.insertUser( new User( name.toUpperCase() ) );
+										}
+									} catch ( Exception e ) {
+									}
+
+								}
+							}
+							else {
+								throw new Exception( "Couldn't get a random name!" );
+							}
+
+						} catch ( Exception e ) {
+							e.printStackTrace();
+						}
+
+						try {
+							Thread.sleep( TimeUnit.SECONDS.toMillis( PlayerServletConfig.scanTime ) );
+						} catch ( InterruptedException e ) {
+						}
+
+					}
+
+				}
+			}.start();
+		}
 
 	}
 
