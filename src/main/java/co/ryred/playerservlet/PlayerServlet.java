@@ -48,8 +48,6 @@ public class PlayerServlet extends HttpServlet
 		Transaction tx = null;
 		try {
 			Session session = sessionFactory.openSession();
-			tx = session.beginTransaction();
-
 			Map<String, String> parameters = request.getParameterMap();
 
 			for ( Map.Entry<String, String> entry : parameters.entrySet() ) {
@@ -58,28 +56,49 @@ public class PlayerServlet extends HttpServlet
 					processed++;
 
 					try {
+						tx = session.beginTransaction();
 						session.save( new User( entry.getKey() ) );
 						tx.commit();
 						committed++;
 					} catch ( Exception e ) {
+						try {
+							if ( tx != null && tx.getStatus().canRollback() ) { tx.rollback(); }
+						} catch ( Exception ex ) {
+							e.printStackTrace();
+							ex.printStackTrace();
+						}
 					}
 
 					try {
 						if ( !entry.getKey().toLowerCase().equals( entry.getKey() ) ) {
+							tx = session.beginTransaction();
 							session.save( new User( entry.getKey().toLowerCase() ) );
 							tx.commit();
 							committed++;
 						}
 					} catch ( Exception e ) {
+						try {
+							if ( tx != null && tx.getStatus().canRollback() ) { tx.rollback(); }
+						} catch ( Exception ex ) {
+							e.printStackTrace();
+							ex.printStackTrace();
+						}
 					}
 
 					try {
 						if ( !entry.getKey().toUpperCase().equals( entry.getKey() ) ) {
+							tx = session.beginTransaction();
 							session.save( new User( entry.getKey().toUpperCase() ) );
 							tx.commit();
 							committed++;
 						}
 					} catch ( Exception e ) {
+						try {
+							if ( tx != null && tx.getStatus().canRollback() ) { tx.rollback(); }
+						} catch ( Exception ex ) {
+							e.printStackTrace();
+							ex.printStackTrace();
+						}
 					}
 
 				}
@@ -158,34 +177,51 @@ public class PlayerServlet extends HttpServlet
 		try {
 
 			Session session = sessionFactory.openSession();
-			tx = session.beginTransaction();
 
 			try {
+				tx = session.beginTransaction();
 				session.save( new User( userName ) );
 				tx.commit();
 				i++;
 			} catch ( Exception e ) {
-				e.printStackTrace();
+				try {
+					if ( tx != null && tx.getStatus().canRollback() ) { tx.rollback(); }
+				} catch ( Exception ex ) {
+					e.printStackTrace();
+					ex.printStackTrace();
+				}
 			}
 
 			try {
 				if ( !userName.toLowerCase().equals( userName ) ) {
+					tx = session.beginTransaction();
 					session.save( new User( userName.toLowerCase() ) );
 					tx.commit();
 					i++;
 				}
 			} catch ( Exception e ) {
-				e.printStackTrace();
+				try {
+					if ( tx != null && tx.getStatus().canRollback() ) { tx.rollback(); }
+				} catch ( Exception ex ) {
+					e.printStackTrace();
+					ex.printStackTrace();
+				}
 			}
 
 			try {
 				if ( !userName.toUpperCase().equals( userName ) ) {
+					tx = session.beginTransaction();
 					session.save( new User( userName.toUpperCase() ) );
 					tx.commit();
 					i++;
 				}
 			} catch ( Exception e ) {
-				e.printStackTrace();
+				try {
+					if ( tx != null && tx.getStatus().canRollback() ) { tx.rollback(); }
+				} catch ( Exception ex ) {
+					e.printStackTrace();
+					ex.printStackTrace();
+				}
 			}
 
 			session.close();
