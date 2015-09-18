@@ -11,7 +11,7 @@
 
     <properties>
         <env.BUILD_NUMBER>LOCAL_BUILD</env.BUILD_NUMBER>
-        <spring.version>3.2.0.RELEASE</spring.version>
+        <spring.version>4.2.0.RELEASE</spring.version>
     </properties>
 
     <build>
