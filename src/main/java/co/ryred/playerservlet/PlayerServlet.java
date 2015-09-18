@@ -146,6 +146,7 @@ public class PlayerServlet extends HttpServlet
 				ub.insertUser( new User( userName ) );
 				i++;
 			} catch ( Exception e ) {
+				e.printStackTrace();
 			}
 
 			try {
