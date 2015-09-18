@@ -31,6 +31,7 @@ public class PlayerServlet extends HttpServlet
 		PlayerServletConfig.init();
 
 		Configuration cfg = new Configuration();
+		cfg.addAnnotatedClass( User.class );
 		cfg.configure( PlayerServletConfig.configFile );
 		this.sessionFactory = cfg.buildSessionFactory();
 
