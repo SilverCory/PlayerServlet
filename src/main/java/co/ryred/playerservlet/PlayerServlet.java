@@ -1,11 +1,10 @@
 package co.ryred.playerservlet;
 
 import co.ryred.playerservlet.user.User;
+import co.ryred.playerservlet.user.dao.UserBean;
 import com.google.gson.Gson;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -23,17 +22,19 @@ public class PlayerServlet extends HttpServlet
 {
 
 	private static final Gson full_gson = new Gson();
-	private final SessionFactory sessionFactory;
+	private final BeanFactory context;
 
 	public PlayerServlet() throws Exception
 	{
 
 		PlayerServletConfig.init();
 
-		Configuration cfg = new Configuration();
+		/*Configuration cfg = new Configuration();
 		cfg.addAnnotatedClass( User.class );
 		cfg.configure( PlayerServletConfig.configFile );
-		this.sessionFactory = cfg.buildSessionFactory();
+		this.sessionFactory = cfg.buildSessionFactory();*/
+
+		this.context = new FileSystemXmlApplicationContext( PlayerServletConfig.configFile.getPath() );
 
 	}
 
@@ -45,9 +46,10 @@ public class PlayerServlet extends HttpServlet
 
 		int processed = 0;
 		int committed = 0;
-		Transaction tx = null;
+
 		try {
-			Session session = sessionFactory.openSession();
+
+			UserBean ub = (UserBean) this.context.getBean( "userBean" );
 			Map<String, String> parameters = request.getParameterMap();
 
 			for ( Map.Entry<String, String> entry : parameters.entrySet() ) {
@@ -56,70 +58,33 @@ public class PlayerServlet extends HttpServlet
 					processed++;
 
 					try {
-						tx = session.beginTransaction();
-						session.save( new User( entry.getKey() ) );
-						tx.commit();
+						ub.insertUser( new User( entry.getKey() ) );
 						committed++;
 					} catch ( Exception e ) {
-						try {
-							if ( tx != null && tx.getStatus().canRollback() ) { tx.rollback(); }
-						} catch ( Exception ex ) {
-							e.printStackTrace();
-							ex.printStackTrace();
-						}
 					}
 
 					try {
 						if ( !entry.getKey().toLowerCase().equals( entry.getKey() ) ) {
-							tx = session.beginTransaction();
-							session.save( new User( entry.getKey().toLowerCase() ) );
-							tx.commit();
+							ub.insertUser( new User( entry.getKey().toLowerCase() ) );
 							committed++;
 						}
 					} catch ( Exception e ) {
-						try {
-							if ( tx != null && tx.getStatus().canRollback() ) { tx.rollback(); }
-						} catch ( Exception ex ) {
-							e.printStackTrace();
-							ex.printStackTrace();
-						}
 					}
 
 					try {
 						if ( !entry.getKey().toUpperCase().equals( entry.getKey() ) ) {
-							tx = session.beginTransaction();
-							session.save( new User( entry.getKey().toUpperCase() ) );
-							tx.commit();
+							ub.insertUser( new User( entry.getKey().toUpperCase() ) );
 							committed++;
 						}
 					} catch ( Exception e ) {
-						try {
-							if ( tx != null && tx.getStatus().canRollback() ) { tx.rollback(); }
-						} catch ( Exception ex ) {
-							e.printStackTrace();
-							ex.printStackTrace();
-						}
 					}
 
 				}
-
-				session.close();
 
 				if ( processed >= 100 ) break;
 
 			}
 		} catch ( Exception e ) {
-
-			try {
-
-				if ( tx != null && tx.getStatus().canRollback() ) {
-					tx.rollback();
-				}
-
-			} catch ( Exception ex ) {
-				e.printStackTrace();
-				ex.printStackTrace();
-			}
 
 			response.setStatus( 400 );
 			response.getOutputStream().print( "{\"error\": \"" + e.getMessage() + "\" }" );
@@ -173,71 +138,33 @@ public class PlayerServlet extends HttpServlet
 		}
 
 		int i = 0;
-		Transaction tx = null;
 		try {
 
-			Session session = sessionFactory.openSession();
+			UserBean ub = (UserBean) this.context.getBean( "userBean" );
 
 			try {
-				tx = session.beginTransaction();
-				session.save( new User( userName ) );
-				tx.commit();
+				ub.insertUser( new User( userName ) );
 				i++;
 			} catch ( Exception e ) {
-				try {
-					if ( tx != null && tx.getStatus().canRollback() ) { tx.rollback(); }
-				} catch ( Exception ex ) {
-					e.printStackTrace();
-					ex.printStackTrace();
-				}
 			}
 
 			try {
 				if ( !userName.toLowerCase().equals( userName ) ) {
-					tx = session.beginTransaction();
-					session.save( new User( userName.toLowerCase() ) );
-					tx.commit();
+					ub.insertUser( new User( userName.toLowerCase() ) );
 					i++;
 				}
 			} catch ( Exception e ) {
-				try {
-					if ( tx != null && tx.getStatus().canRollback() ) { tx.rollback(); }
-				} catch ( Exception ex ) {
-					e.printStackTrace();
-					ex.printStackTrace();
-				}
 			}
 
 			try {
 				if ( !userName.toUpperCase().equals( userName ) ) {
-					tx = session.beginTransaction();
-					session.save( new User( userName.toUpperCase() ) );
-					tx.commit();
+					ub.insertUser( new User( userName.toUpperCase() ) );
 					i++;
 				}
 			} catch ( Exception e ) {
-				try {
-					if ( tx != null && tx.getStatus().canRollback() ) { tx.rollback(); }
-				} catch ( Exception ex ) {
-					e.printStackTrace();
-					ex.printStackTrace();
-				}
 			}
-
-			session.close();
 
 		} catch ( Exception e ) {
-
-			try {
-
-				if ( tx != null && tx.getStatus().canRollback() ) {
-					tx.rollback();
-				}
-
-			} catch ( Exception ex ) {
-				e.printStackTrace();
-				ex.printStackTrace();
-			}
 
 			response.setStatus( 400 );
 			response.getOutputStream().print( "{\"error\": \"" + e.getMessage() + "\" }" );

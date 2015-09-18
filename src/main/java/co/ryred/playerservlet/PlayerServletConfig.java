@@ -61,8 +61,8 @@ public class PlayerServletConfig
 		config.options().header( HEADER );
 		config.options().copyDefaults( true );
 
-		version = getInt( "config-version", 1 );
-		set( "config-version", 1 );
+		version = getInt( "config-version", 2 );
+		set( "config-version", 2 );
 		readConfig( PlayerServletConfig.class, null );
 
 		Logger.getRootLogger().log( Level.INFO, "Configuration summary!" );
@@ -159,8 +159,7 @@ public class PlayerServletConfig
 		String fileLoc = getString( path, def );
 
 		if ( System.getProperty( "catalina.base" ) != null ) {
-			fileLoc = fileLoc.replace( "{HOME}", System.getProperty( "catalina.base" ) )
-					.replace( "/", File.separator );
+			fileLoc = fileLoc.replace( "{HOME}", System.getProperty( "catalina.base" ) ).replace( "/", File.separator );
 		}
 
 		File file = new File( fileLoc );
@@ -177,17 +176,17 @@ public class PlayerServletConfig
 	private static void dataSettings()
 	{
 
-		if ( version < 1 ) {
-			Logger.getRootLogger().log( Level.FATAL, "Oudated config, config is not configured!" );
-			set( "settings.data.configLocation", "{HOME}/conf/hibernate.cfg.xml" );
+		if ( version < 2 ) {
+			Logger.getRootLogger().log( Level.FATAL, "Oudated config, dataconfig is not configured!" );
+			set( "settings.data.configLocation", "conf/spring.xml" );
 		}
 
-		configFile = getFile( "settings.data.configLocation", "{HOME}/conf/hibernate.cfg.xml" );
+		configFile = getFile( "settings.data.configLocation", "conf/spring.xml" );
 
 		if ( !configFile.exists() ) {
 			try {
 
-				IOUtils.copy( PlayerServlet.class.getResourceAsStream( "/hibernate.cfg.xml" ), new FileOutputStream( configFile ) );
+				IOUtils.copy( PlayerServlet.class.getResourceAsStream( "/spring.xml" ), new FileOutputStream( configFile ) );
 
 			} catch ( Exception e ) {
 				e.printStackTrace();
