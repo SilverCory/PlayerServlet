@@ -24,7 +24,7 @@ public class PlayerServletConfig
 {
 
 
-	private static final File CONFIG_FILE = new File( new File( System.getProperty( "catalina.base" ), "conf" ), "UUIDServlet.yml" );
+	private static final File CONFIG_FILE = new File( new File( System.getProperty( "catalina.base" ), "conf" ), "PlayerServlet.yml" );
 	private static final String HEADER = "YAML only please!";
 	public static YamlConfiguration config;
 	public static boolean debug;
