@@ -50,7 +50,8 @@ public class UserManagment implements IUserManagment
 	@Override
 	public int getTotalUsers()
 	{
-		return (int) sessionFactory.getCurrentSession().createCriteria( User.class ).setProjection( Projections.rowCount() ).uniqueResult();
+		Number num = (Number) sessionFactory.getCurrentSession().createCriteria( User.class ).setProjection( Projections.rowCount() ).uniqueResult();
+		return num.intValue();
 	}
 
 }
