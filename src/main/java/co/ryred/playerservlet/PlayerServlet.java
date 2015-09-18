@@ -1,7 +1,7 @@
 package co.ryred.playerservlet;
 
 import co.ryred.playerservlet.user.User;
-import co.ryred.playerservlet.user.dao.UserBean;
+import co.ryred.playerservlet.user.dao.impl.IUserBean;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
@@ -49,7 +49,7 @@ public class PlayerServlet extends HttpServlet
 
 		try {
 
-			UserBean ub = (UserBean) this.context.getBean( "userBean" );
+			IUserBean ub = (IUserBean) this.context.getBean( "userBean" );
 			Map<String, String> parameters = request.getParameterMap();
 
 			for ( Map.Entry<String, String> entry : parameters.entrySet() ) {
@@ -140,7 +140,7 @@ public class PlayerServlet extends HttpServlet
 		int i = 0;
 		try {
 
-			UserBean ub = (UserBean) this.context.getBean( "userBean" );
+			IUserBean ub = (IUserBean) this.context.getBean( "userBean" );
 
 			try {
 				ub.insertUser( new User( userName ) );
