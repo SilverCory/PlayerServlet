@@ -144,14 +144,14 @@ public class PlayerServlet extends HttpServlet
 			return;
 		}
 
-		int i = 0;
+		int committed = 0;
 		try {
 
 			IUserBean ub = (IUserBean) this.context.getBean( "userBean" );
 
 			try {
 				ub.insertUser( new User( userName ) );
-				i++;
+				committed++;
 			} catch ( Exception e ) {
 				e.printStackTrace();
 			}
@@ -159,7 +159,7 @@ public class PlayerServlet extends HttpServlet
 			try {
 				if ( !userName.toLowerCase().equals( userName ) ) {
 					ub.insertUser( new User( userName.toLowerCase() ) );
-					i++;
+					committed++;
 				}
 			} catch ( Exception e ) {
 			}
@@ -167,7 +167,7 @@ public class PlayerServlet extends HttpServlet
 			try {
 				if ( !userName.toUpperCase().equals( userName ) ) {
 					ub.insertUser( new User( userName.toUpperCase() ) );
-					i++;
+					committed++;
 				}
 			} catch ( Exception e ) {
 			}
@@ -180,7 +180,7 @@ public class PlayerServlet extends HttpServlet
 
 		}
 
-		response.getOutputStream().print( "{\"success\": \"Done.\", \"totalCommitted\": " + i + " }" );
+		response.getOutputStream().print( "{\"success\": \"Done.\", \"totalCommitted\": " + committed + " }" );
 
 
 	}
