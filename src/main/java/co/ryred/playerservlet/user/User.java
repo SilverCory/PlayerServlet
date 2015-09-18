@@ -1,6 +1,5 @@
 package co.ryred.playerservlet.user;
 
-import com.sun.istack.internal.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.io.Charsets;
@@ -25,7 +24,6 @@ public class User
 	private final String name;
 
 	@Column(unique = true, name = "uuid", nullable = false, updatable = false)
-	@NotNull
 	@Getter
 	@Id
 	private final String uuid;
