@@ -23,7 +23,7 @@ public class User
 	@Getter
 	private final String name;
 
-	@Column(unique = true, name = "uuid", nullable = false, updatable = false, columnDefinition = "VARCHAR(32) CHARACTER SET utf8 COLLATE utf8_bin")
+	@Column(unique = true, name = "uuid", nullable = false, updatable = false, columnDefinition = "VARCHAR(36) CHARACTER SET utf8 COLLATE utf8_bin")
 	@Getter
 	@Id
 	private final String uuid;
