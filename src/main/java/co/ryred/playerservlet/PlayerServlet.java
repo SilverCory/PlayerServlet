@@ -165,6 +165,7 @@ public class PlayerServlet extends HttpServlet
 				tx.commit();
 				i++;
 			} catch ( Exception e ) {
+				e.printStackTrace();
 			}
 
 			try {
@@ -174,6 +175,7 @@ public class PlayerServlet extends HttpServlet
 					i++;
 				}
 			} catch ( Exception e ) {
+				e.printStackTrace();
 			}
 
 			try {
@@ -183,6 +185,7 @@ public class PlayerServlet extends HttpServlet
 					i++;
 				}
 			} catch ( Exception e ) {
+				e.printStackTrace();
 			}
 
 			session.close();
