@@ -56,19 +56,33 @@ public class PlayerServlet extends HttpServlet
 				if ( i < 100 && entry.getValue() == null && entry.getKey() != null && entry.getKey().matches( "[a-zA-Z0-9_]{1,16}" ) ) {
 					i++;
 
-					session.persist( new User( entry.getKey() ) );
-
-					if ( !entry.getKey().toLowerCase().equals( entry.getKey() ) ) {
-						session.persist( new User( entry.getKey().toLowerCase() ) );
+					try {
+						session.persist( new User( entry.getKey() ) );
+						tx.commit();
+					} catch ( Exception e ) {
+						tx.rollback();
 					}
 
-					if ( !entry.getKey().toUpperCase().equals( entry.getKey() ) ) {
-						session.persist( new User( entry.getKey().toUpperCase() ) );
+					try {
+						if ( !entry.getKey().toLowerCase().equals( entry.getKey() ) ) {
+							session.persist( new User( entry.getKey().toLowerCase() ) );
+							tx.commit();
+						}
+					} catch ( Exception e ) {
+						tx.rollback();
+					}
+
+					try {
+						if ( !entry.getKey().toUpperCase().equals( entry.getKey() ) ) {
+							session.persist( new User( entry.getKey().toUpperCase() ) );
+							tx.commit();
+						}
+					} catch ( Exception e ) {
+						tx.rollback();
 					}
 
 				}
 
-				tx.commit();
 				session.close();
 
 				if ( i >= 100 ) break;
@@ -145,19 +159,33 @@ public class PlayerServlet extends HttpServlet
 			Session session = sessionFactory.openSession();
 			tx = session.beginTransaction();
 
-			session.persist( new User( userName ) );
-
-			if ( !userName.toLowerCase().equals( userName ) ) {
-				session.persist( new User( userName.toLowerCase() ) );
-				i++;
+			try {
+				session.saveOrUpdate( new User( userName ) );
+				tx.commit();
+			} catch ( Exception e ) {
+				tx.rollback();
 			}
 
-			if ( !userName.toUpperCase().equals( userName ) ) {
-				session.persist( new User( userName.toUpperCase() ) );
-				i++;
+			try {
+				if ( !userName.toLowerCase().equals( userName ) ) {
+					session.saveOrUpdate( new User( userName.toLowerCase() ) );
+					tx.commit();
+					i++;
+				}
+			} catch ( Exception e ) {
+				tx.rollback();
 			}
 
-			tx.commit();
+			try {
+				if ( !userName.toUpperCase().equals( userName ) ) {
+					session.saveOrUpdate( new User( userName.toUpperCase() ) );
+					tx.commit();
+					i++;
+				}
+			} catch ( Exception e ) {
+				tx.rollback();
+			}
+
 			session.close();
 
 		} catch ( Exception e ) {
