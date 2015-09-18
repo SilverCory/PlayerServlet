@@ -43,7 +43,8 @@ public class PlayerServlet extends HttpServlet
 		response.setContentType( "application/json" );
 
 
-		int i = 0;
+		int processed = 0;
+		int committed = 0;
 		Transaction tx = null;
 		try {
 			Session session = sessionFactory.openSession();
@@ -53,20 +54,22 @@ public class PlayerServlet extends HttpServlet
 
 			for ( Map.Entry<String, String> entry : parameters.entrySet() ) {
 
-				if ( i < 100 && entry.getValue() == null && entry.getKey() != null && entry.getKey().matches( "[a-zA-Z0-9_]{1,16}" ) ) {
-					i++;
+				if ( processed < 100 && entry.getValue() == null && entry.getKey() != null && entry.getKey().matches( "[a-zA-Z0-9_]{1,16}" ) ) {
+					processed++;
 
 					try {
-						session.persist( new User( entry.getKey() ) );
+						session.save( new User( entry.getKey() ) );
 						tx.commit();
+						committed++;
 					} catch ( Exception e ) {
 						tx.rollback();
 					}
 
 					try {
 						if ( !entry.getKey().toLowerCase().equals( entry.getKey() ) ) {
-							session.persist( new User( entry.getKey().toLowerCase() ) );
+							session.save( new User( entry.getKey().toLowerCase() ) );
 							tx.commit();
+							committed++;
 						}
 					} catch ( Exception e ) {
 						tx.rollback();
@@ -74,8 +77,9 @@ public class PlayerServlet extends HttpServlet
 
 					try {
 						if ( !entry.getKey().toUpperCase().equals( entry.getKey() ) ) {
-							session.persist( new User( entry.getKey().toUpperCase() ) );
+							session.save( new User( entry.getKey().toUpperCase() ) );
 							tx.commit();
+							committed++;
 						}
 					} catch ( Exception e ) {
 						tx.rollback();
@@ -85,7 +89,7 @@ public class PlayerServlet extends HttpServlet
 
 				session.close();
 
-				if ( i >= 100 ) break;
+				if ( processed >= 100 ) break;
 
 			}
 		} catch ( Exception e ) {
@@ -107,7 +111,7 @@ public class PlayerServlet extends HttpServlet
 
 		}
 
-		response.getOutputStream().print( "{\"success\": \"Done.\", \"totalCommitted\": " + i + " }" );
+		response.getOutputStream().print( "{\"success\": \"Done.\", \"totalCommitted\": " + committed + ", \"totalProcessed\": " + processed + " }" );
 
 	}
 
@@ -152,7 +156,7 @@ public class PlayerServlet extends HttpServlet
 			return;
 		}
 
-		int i = 1;
+		int i = 0;
 		Transaction tx = null;
 		try {
 
@@ -160,15 +164,16 @@ public class PlayerServlet extends HttpServlet
 			tx = session.beginTransaction();
 
 			try {
-				session.saveOrUpdate( new User( userName ) );
+				session.save( new User( userName ) );
 				tx.commit();
+				i++;
 			} catch ( Exception e ) {
 				tx.rollback();
 			}
 
 			try {
 				if ( !userName.toLowerCase().equals( userName ) ) {
-					session.saveOrUpdate( new User( userName.toLowerCase() ) );
+					session.save( new User( userName.toLowerCase() ) );
 					tx.commit();
 					i++;
 				}
@@ -178,7 +183,7 @@ public class PlayerServlet extends HttpServlet
 
 			try {
 				if ( !userName.toUpperCase().equals( userName ) ) {
-					session.saveOrUpdate( new User( userName.toUpperCase() ) );
+					session.save( new User( userName.toUpperCase() ) );
 					tx.commit();
 					i++;
 				}
