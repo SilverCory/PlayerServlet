@@ -19,11 +19,11 @@ import javax.persistence.Table;
 public class User
 {
 
-	@Column(unique = true, name = "username", nullable = false, updatable = false, columnDefinition = "VARCHAR(16) CHARACTER SET utf8 COLLATE utf8_cs")
+	@Column(unique = true, name = "username", nullable = false, updatable = false, columnDefinition = "VARCHAR(16) CHARACTER SET utf8 COLLATE utf8_bin")
 	@Getter
 	private final String name;
 
-	@Column(unique = true, name = "uuid", nullable = false, updatable = false, columnDefinition = "VARCHAR(32) CHARACTER SET utf8 COLLATE utf8_cs")
+	@Column(unique = true, name = "uuid", nullable = false, updatable = false, columnDefinition = "VARCHAR(32) CHARACTER SET utf8 COLLATE utf8_bin")
 	@Getter
 	@Id
 	private final String uuid;
