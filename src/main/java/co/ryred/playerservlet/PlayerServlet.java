@@ -125,9 +125,16 @@ public class PlayerServlet extends HttpServlet
 
 		if ( requestArr.length >= 1 ) { userName = requestArr[ 0 ]; }
 
-		if ( userName == null ) {
-			response.setStatus( 400 );
-			response.getOutputStream().print( "{\"error\": \"No username provided.\" }" );
+		if ( userName == null || userName.equals( "" ) ) {
+
+			int rows = -1;
+
+			try {
+				IUserBean ub = (IUserBean) this.context.getBean( "userBean" );
+				rows = ub.getTotalUsers();
+			} catch ( Exception e ) {}
+
+			response.getOutputStream().print( "{\"totalRows\": " + rows + " }" );
 			return;
 		}
 

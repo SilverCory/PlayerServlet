@@ -46,4 +46,10 @@ public class UserBean implements IUserBean
 		return userManager.getUsers();
 	}
 
+	@Override
+	public int getTotalUsers()
+	{
+		return userManager.getTotalUsers();
+	}
+
 }

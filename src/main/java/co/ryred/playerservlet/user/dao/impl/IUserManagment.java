@@ -20,4 +20,6 @@ public interface IUserManagment
 
 	List<User> getUsers();
 
+	int getTotalUsers();
+
 }

@@ -5,6 +5,7 @@ import co.ryred.playerservlet.user.dao.impl.IUserManagment;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Projections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +45,12 @@ public class UserManagment implements IUserManagment
 	{
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria( User.class );
 		return criteria.list();
+	}
+
+	@Override
+	public int getTotalUsers()
+	{
+		return (int) sessionFactory.getCurrentSession().createCriteria( User.class ).setProjection( Projections.rowCount() ).uniqueResult();
 	}
 
 }

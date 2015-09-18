@@ -20,4 +20,6 @@ public interface IUserBean
 
 	List<User> getUsers();
 
+	int getTotalUsers();
+
 }
