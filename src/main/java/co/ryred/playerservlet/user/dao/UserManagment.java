@@ -1,6 +1,7 @@
 package co.ryred.playerservlet.user.dao;
 
 import co.ryred.playerservlet.user.User;
+import co.ryred.playerservlet.user.dao.impl.IUserManagment;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
@@ -15,7 +16,7 @@ import java.util.UUID;
  *         Created by acech_000 on 18/09/2015.
  */
 @Service
-public class UserManagment
+public class UserManagment implements IUserManagment
 {
 
 	@Autowired

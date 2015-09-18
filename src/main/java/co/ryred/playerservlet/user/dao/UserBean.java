@@ -1,6 +1,8 @@
 package co.ryred.playerservlet.user.dao;
 
 import co.ryred.playerservlet.user.User;
+import co.ryred.playerservlet.user.dao.impl.IUserBean;
+import co.ryred.playerservlet.user.dao.impl.IUserManagment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,11 +13,12 @@ import java.util.UUID;
  * @author Cory Redmond
  *         Created by acech_000 on 18/09/2015.
  */
-public class UserBean
+@Transactional
+public class UserBean implements IUserBean
 {
 
 	@Autowired
-	private UserManagment userManager;
+	private IUserManagment userManager;
 
 	@Transactional
 	public void insertUser( User user )
