@@ -62,12 +62,6 @@ public class PlayerServlet extends HttpServlet
 						tx.commit();
 						committed++;
 					} catch ( Exception e ) {
-						try {
-							if ( tx.getStatus().canRollback() ) tx.rollback();
-						} catch ( Exception ex ) {
-							e.printStackTrace();
-							ex.printStackTrace();
-						}
 					}
 
 					try {
@@ -77,12 +71,6 @@ public class PlayerServlet extends HttpServlet
 							committed++;
 						}
 					} catch ( Exception e ) {
-						try {
-							if ( tx.getStatus().canRollback() ) tx.rollback();
-						} catch ( Exception ex ) {
-							e.printStackTrace();
-							ex.printStackTrace();
-						}
 					}
 
 					try {
@@ -92,12 +80,6 @@ public class PlayerServlet extends HttpServlet
 							committed++;
 						}
 					} catch ( Exception e ) {
-						try {
-							if ( tx.getStatus().canRollback() ) tx.rollback();
-						} catch ( Exception ex ) {
-							e.printStackTrace();
-							ex.printStackTrace();
-						}
 					}
 
 				}
@@ -183,12 +165,6 @@ public class PlayerServlet extends HttpServlet
 				tx.commit();
 				i++;
 			} catch ( Exception e ) {
-				try {
-					if ( tx.getStatus().canRollback() ) tx.rollback();
-				} catch ( Exception ex ) {
-					e.printStackTrace();
-					ex.printStackTrace();
-				}
 			}
 
 			try {
@@ -198,12 +174,6 @@ public class PlayerServlet extends HttpServlet
 					i++;
 				}
 			} catch ( Exception e ) {
-				try {
-					if ( tx.getStatus().canRollback() ) tx.rollback();
-				} catch ( Exception ex ) {
-					e.printStackTrace();
-					ex.printStackTrace();
-				}
 			}
 
 			try {
@@ -213,12 +183,6 @@ public class PlayerServlet extends HttpServlet
 					i++;
 				}
 			} catch ( Exception e ) {
-				try {
-					if ( tx.getStatus().canRollback() ) tx.rollback();
-				} catch ( Exception ex ) {
-					e.printStackTrace();
-					ex.printStackTrace();
-				}
 			}
 
 			session.close();
