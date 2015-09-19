@@ -3,6 +3,10 @@ package co.ryred.playerservlet;
 import co.ryred.playerservlet.user.User;
 import co.ryred.playerservlet.user.dao.impl.IUserBean;
 import com.google.gson.Gson;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
@@ -14,6 +18,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -40,7 +45,7 @@ public class PlayerServlet extends HttpServlet
 		this.context = new FileSystemXmlApplicationContext( PlayerServletConfig.configFile.getPath() );
 
 		if ( PlayerServletConfig.scanTime > 1 ) {
-			new Thread( "Name-Scanning-Thread" )
+			new Thread( "MCSV-Scanning-Thread" )
 			{
 				@Override
 				public void run()
@@ -103,6 +108,67 @@ public class PlayerServlet extends HttpServlet
 
 				}
 			}.start();
+
+			new Thread( "MCSkins-Scanning-Thread" )
+			{
+				@Override
+				public void run()
+				{
+
+					while ( true ) {
+
+						try {
+							Document doc = Jsoup.parse( new Scanner( new URL( "http://mcskins.co/browse" ).openStream(), "UTF-8" ).useDelimiter( "\\A" ).next() );
+							Elements ul = doc.select( "#main > div > ul" );
+							System.out.println( "UL size: " + ul.size() );
+
+							for ( Element li : ul ) {
+
+								Elements nameSpans = li.select( "a > span" );
+								for ( Element nameSpan : nameSpans ) {
+									String name = nameSpan.text().trim();
+									if ( name != null && name.matches( "[a-zA-Z0-9_]{1,16}" ) ) {
+
+										IUserBean ub = (IUserBean) PlayerServlet.this.context.getBean( "userBean" );
+
+										try {
+											ub.insertUser( new User( name ) );
+										} catch ( Exception e ) {
+										}
+
+										try {
+											if ( !name.toLowerCase().equals( name ) ) {
+												ub.insertUser( new User( name.toLowerCase() ) );
+											}
+										} catch ( Exception e ) {
+										}
+
+										try {
+											if ( !name.toUpperCase().equals( name ) ) {
+												ub.insertUser( new User( name.toUpperCase() ) );
+											}
+										} catch ( Exception e ) {
+										}
+
+									}
+								}
+
+							}
+
+						} catch ( Exception e ) {
+							e.printStackTrace();
+						}
+
+						try {
+							Thread.sleep( TimeUnit.SECONDS.toMillis( PlayerServletConfig.scanTime ) );
+						} catch ( InterruptedException e ) {
+						}
+
+					}
+
+				}
+			}.start();
+
 		}
 
 	}
