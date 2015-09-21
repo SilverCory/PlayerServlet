@@ -59,7 +59,6 @@ public class PlayerServlet extends HttpServlet
 							con.setInstanceFollowRedirects( false );
 							con.connect();
 							int responseCode = con.getResponseCode();
-							System.out.println( responseCode );
 							String location = con.getHeaderField( "Location" );
 
 							if ( responseCode == 302 && location != null ) {
@@ -120,7 +119,6 @@ public class PlayerServlet extends HttpServlet
 						try {
 							Document doc = Jsoup.parse( new Scanner( new URL( "http://mcskins.co/browse" ).openStream(), "UTF-8" ).useDelimiter( "\\A" ).next() );
 							Elements ul = doc.select( "#main > div > ul" );
-							System.out.println( "UL size: " + ul.size() );
 
 							for ( Element li : ul ) {
 
