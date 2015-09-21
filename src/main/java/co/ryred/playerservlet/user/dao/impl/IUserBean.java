@@ -22,4 +22,6 @@ public interface IUserBean
 
 	int getTotalUsers();
 
+	boolean exists( User user );
+
 }

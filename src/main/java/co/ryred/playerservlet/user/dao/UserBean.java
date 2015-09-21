@@ -52,4 +52,10 @@ public class UserBean implements IUserBean
 		return userManager.getTotalUsers();
 	}
 
+	@Override
+	public boolean exists( User user )
+	{
+		return userManager.exists( user );
+	}
+
 }

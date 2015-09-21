@@ -22,4 +22,6 @@ public interface IUserManagment
 
 	int getTotalUsers();
 
+	boolean exists( User user );
+
 }

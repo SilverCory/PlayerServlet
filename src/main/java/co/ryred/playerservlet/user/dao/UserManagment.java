@@ -25,7 +25,7 @@ public class UserManagment implements IUserManagment
 
 	public void insertUser( User user )
 	{
-		sessionFactory.getCurrentSession().save( user );
+		if ( !exists( user ) ) { sessionFactory.getCurrentSession().save( user ); }
 	}
 
 	public User getUser( UUID uuid )
@@ -52,6 +52,18 @@ public class UserManagment implements IUserManagment
 	{
 		Number num = (Number) sessionFactory.getCurrentSession().createCriteria( User.class ).setProjection( Projections.rowCount() ).uniqueResult();
 		return num.intValue();
+	}
+
+	@Override
+	public boolean exists( User user )
+	{
+		Query q = sessionFactory.getCurrentSession().createQuery( "from players where uuid = :uuid and name = :name" );
+		q.setString( "uuid", user.getUuid() );
+		q.setString( "name", user.getName() );
+		User guser = (User) q.uniqueResult();
+
+		return guser != null;
+
 	}
 
 }
